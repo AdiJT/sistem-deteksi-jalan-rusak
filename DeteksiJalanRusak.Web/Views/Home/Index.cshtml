@@ -1,0 +1,55 @@
+﻿@using DeteksiJalanRusak.Web.Models.Home
+@model IndexVM
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-12">
+        <form asp-action="Index" enctype="multipart/form-data">
+            <label asp-for="@Model.FormFile" class="form-control"></label>
+            <input asp-for="@Model.FormFile" class="form-control" />
+            <span asp-validation-for="@Model.FormFile" class="text-danger"></span>
+
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    @if (Model.ResultVM is not null)
+    {
+        <div class="col-12">
+            <p>File name : @Model.ResultVM.FileName</p>
+
+            <p>Daftar Kerusakan</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Kerusakan</th>
+                        <th>Luas</th>
+                        <th>Luas Persegi</th>
+                        <th>Panjang</th>
+                        <th>Lebar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var kerusakan in Model.ResultVM.Results)
+                    {
+                        <tr>
+                            <td>@kerusakan.Segmentation.Label.Name</td>
+                            <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
+                            <td>@((kerusakan.Panjang * kerusakan.Lebar).ToString("F5")) m<sup>2</sup></td>
+                            <td>@kerusakan.Panjang.ToString("F5") m</td>
+                            <td>@kerusakan.Luas.ToString("F5") m</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <img class="img-fluid" src="@Model.ResultVM.ImageBase64"/>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
