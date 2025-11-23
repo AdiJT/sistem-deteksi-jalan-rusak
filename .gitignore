@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/DeteksiJalanRusak.Web/appsettings.Development.json
