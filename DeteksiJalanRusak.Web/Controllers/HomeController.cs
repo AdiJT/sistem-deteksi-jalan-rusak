@@ -63,6 +63,8 @@ namespace DeteksiJalanRusak.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(IndexVM vm)
         {
+            if (!ModelState.IsValid) return View(vm);
+
             if (vm.FormFile is null)
             {
                 ModelState.AddModelError(nameof(IndexVM.FormFile), "Foto harus dipilih");
@@ -99,8 +101,8 @@ namespace DeteksiJalanRusak.Web.Controllers
                 ImageBase64 = image.ToBase64String(),
                 Lebar = image.Width,
                 Tinggi = image.Height,
-                AdaKertas = false,
-                Results = [.. results.Select(r => new Kerusakan { Segmentation = r })]
+                Kertas = null,
+                Results = [.. results.Where(r => r.Label.Name != LabelEnum.Kertas.ToString()).Select(r => new Kerusakan { Segmentation = r })]
             };
 
             var kertas = results.FirstOrDefault(s => s.Label.Name == LabelEnum.Kertas.ToString());
@@ -113,17 +115,24 @@ namespace DeteksiJalanRusak.Web.Controllers
                 var mPerPixel = PANJANG_KERTASA4_M / 
                     (kertas.BoundingBox.Width > kertas.BoundingBox.Height ? kertas.BoundingBox.Width : kertas.BoundingBox.Height);
 
-                vm.ResultVM.AdaKertas = true;
+                vm.ResultVM.Kertas = new Kerusakan
+                {
+                    Segmentation = kertas,
+                    Luas = kertas.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
+                    Panjang = kertas.BoundingBox.Height * mPerPixel,
+                    Lebar = kertas.BoundingBox.Width * mPerPixel,
+                };
+
                 vm.ResultVM.M2PerPiksel = m2PerPixel;
                 vm.ResultVM.MPerPiksel = mPerPixel;
-                vm.ResultVM.Results = [.. vm.ResultVM.Results.Select(x => new Kerusakan
+
+                foreach(var kerusakan in vm.ResultVM.Results)
                 {
-                    Segmentation = x.Segmentation,
-                    Luas = x.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
-                    LuasPersegi = x.Segmentation.BoundingBox.Width * x.Segmentation.BoundingBox.Height * m2PerPixel,
-                    Panjang = x.Segmentation.BoundingBox.Height * mPerPixel,
-                    Lebar = x.Segmentation.BoundingBox.Width * mPerPixel,
-                })];
+                    kerusakan.Luas = kerusakan.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel;
+                    kerusakan.Panjang = kerusakan.Segmentation.BoundingBox.Height * mPerPixel;
+                    kerusakan.Lebar = kerusakan.Segmentation.BoundingBox.Width * mPerPixel;
+                    kerusakan.DistressDensity = kerusakan.Luas / vm.LuasSampel;
+                }
             }
 
             return View(vm);

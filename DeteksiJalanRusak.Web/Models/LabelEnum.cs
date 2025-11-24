@@ -6,7 +6,7 @@ public enum LabelEnum
     Alur,
     Bleding,
     Lubang,
-    PelepasanButir,
+    PelepasanButiran,
     RetakBuaya,
     RetakMemanjang,
     Tambalan

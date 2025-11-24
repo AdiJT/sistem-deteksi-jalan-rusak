@@ -8,8 +8,9 @@ public class IndexVM
     [Required(ErrorMessage = "Foto harus dipilih")]
     public IFormFile? FormFile { get; set; }
 
-    public double PanjangSegmen { get; set; }
-    public double LebarSegmen { get; set; }
+    [Display(Name = "Luas Sampel (meter persegi)")]
+    [Required(ErrorMessage = "Harus diisi")]
+    public double LuasSampel { get; set; } = 200;
 
     public ResultVM? ResultVM { get; set; }
 }
