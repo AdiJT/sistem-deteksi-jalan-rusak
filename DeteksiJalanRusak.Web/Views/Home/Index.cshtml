@@ -1,4 +1,8 @@
-﻿@using DeteksiJalanRusak.Web.Models.Home
+﻿@using DeteksiJalanRusak.Web.Controllers
+@using DeteksiJalanRusak.Web.Extensions
+@using DeteksiJalanRusak.Web.Models.Home
+@using SkiaSharp
+@using YoloDotNet.Extensions
 @model IndexVM
 
 @{
@@ -19,33 +23,67 @@
     {
         <div class="col-12">
             <p>File name : @Model.ResultVM.FileName</p>
+            <p>Ukuran : @Model.ResultVM.Lebar x @Model.ResultVM.Tinggi Pixel</p>
 
-            <p>Daftar Kerusakan</p>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Kerusakan</th>
-                        <th>Luas</th>
-                        <th>Luas Persegi</th>
-                        <th>Panjang</th>
-                        <th>Lebar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var kerusakan in Model.ResultVM.Results)
-                    {
-                        <tr>
-                            <td>@kerusakan.Segmentation.Label.Name</td>
-                            <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
-                            <td>@((kerusakan.Panjang * kerusakan.Lebar).ToString("F5")) m<sup>2</sup></td>
-                            <td>@kerusakan.Panjang.ToString("F5") m</td>
-                            <td>@kerusakan.Luas.ToString("F5") m</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div class="row">
+                @if (Model.ResultVM.AdaKertas)
+                {
+                    <div class="col-6">
+                        <p>Daftar Kerusakan</p>
+                        <p>Dimensi Kertas (m) : @HomeController.PANJANG_KERTASA4_M x @HomeController.LEBAR_KERTASA4_M</p>
+                        <p>Luas Kertas (m<sup>2</sup>) : @HomeController.LUAS_KERTASA4_M2 </p>
+                        <p>m<sup>2</sup>/Pixel : @Model.ResultVM.M2PerPiksel.ToString("F8")</p>
+                        <p>m/Pixel : @Model.ResultVM.MPerPiksel.ToString("F5")</p>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Kerusakan</th>
+                                    <th>Luas</th>
+                                    <th>Luas Persegi</th>
+                                    <th>Panjang</th>
+                                    <th>Lebar</th>
+                                    <th>Ukuran</th>
+                                    <th>Mask</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var kerusakan in Model.ResultVM.Results)
+                                {
+                                    <tr>
+                                        <td>@kerusakan.Segmentation.Label.Name</td>
+                                        <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
+                                        <td>@kerusakan.LuasPersegi.ToString("F5") m<sup>2</sup></td>
+                                        <td>@kerusakan.Panjang.ToString("F5") m</td>
+                                        <td>@kerusakan.Luas.ToString("F5") m</td>
+                                        <td>@kerusakan.Segmentation.BoundingBox.Width x @kerusakan.Segmentation.BoundingBox.Height Pixel</td>
+                                        <td>
+                                            @{
+                                                var bitmap = kerusakan
+                                                    .Segmentation
+                                                    .BitPackedPixelMask
+                                                    .UnpackToBitmap(
+                                                        kerusakan.Segmentation.BoundingBox.Width, 
+                                                        kerusakan.Segmentation.BoundingBox.Height
+                                                    );
 
-            <img class="img-fluid" src="@Model.ResultVM.ImageBase64"/>
+                                                var base64String = bitmap.ToBase64String();
+                                            }
+                                            
+                                            <div style="background-color:black">
+                                                <img class="img-fluid" src="@base64String"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                <div class="col-6">
+                    <img class="img-fluid" src="@Model.ResultVM.ImageBase64" />
+                </div>
+            </div>
         </div>
     }
 </div>

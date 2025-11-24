@@ -6,6 +6,9 @@ public static class DistressDensityToDV
 {
     private static readonly double[] _x = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
+    public const int QMIN = 1;
+    public const int QMAX = 7;
+
     public static double RetakBuaya(double density, DamageType type)
     {
         double[] yL = [0, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 21, 24, 26, 28, 30, 31, 32, 33, 41, 46, 50, 53, 55, 58, 60, 61, 100];
@@ -113,6 +116,35 @@ public static class DistressDensityToDV
             DamageType.High => CubicSpline.InterpolatePchipSorted(x, yH).Interpolate(density),
             _ => throw new ArgumentException(null, nameof(type)),
         };
+    }
+
+    public static double TdvToCdv(double tdv, int q = 1)
+    {
+        q = Math.Clamp(q, QMIN, QMAX );
+
+        var x = new List<double[]>()
+        {
+            new double[] { 0, 100 },
+            new double[] { }, 
+            new double[] { }, 
+            new double[] { }, 
+            new double[] { }, 
+            new double[] { }, 
+            new double[] { }
+        };
+
+        var y = new List<double[]>()
+        {
+            new double[] { 0, 100 },
+            new double[] { },
+            new double[] { },
+            new double[] { },
+            new double[] { },
+            new double[] { },
+            new double[] { }
+        };
+
+        return CubicSpline.InterpolatePchipSorted(x[q], y[q]).Interpolate(tdv);
     }
 }
 

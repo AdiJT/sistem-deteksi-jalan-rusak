@@ -1,4 +1,5 @@
 using DeteksiJalanRusak.Web.Configurations;
+using DeteksiJalanRusak.Web.Extensions;
 using DeteksiJalanRusak.Web.Models;
 using DeteksiJalanRusak.Web.Models.Home;
 using DeteksiJalanRusak.Web.Services.FileServices;
@@ -14,7 +15,12 @@ namespace DeteksiJalanRusak.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private const double LUAS_KERTAS_M2 = 0.0006237;
+        public const double LEBAR_KERTASA4_CM = 21;
+        public const double PANJANG_KERTASA4_CM = 29.7;
+        public const double LEBAR_KERTASA4_M = LEBAR_KERTASA4_CM / 100;
+        public const double PANJANG_KERTASA4_M = PANJANG_KERTASA4_CM / 100;
+        public const double LUAS_KERTASA4_CM2 = LEBAR_KERTASA4_CM * PANJANG_KERTASA4_CM;
+        public const double LUAS_KERTASA4_M2 = LUAS_KERTASA4_CM2 / 10000;
 
         private readonly ILogger<HomeController> _logger;
         private readonly IFileService _fileService;
@@ -84,14 +90,17 @@ namespace DeteksiJalanRusak.Web.Controllers
             });
 
             using var image = SKBitmap.Decode(foto.Value);
-            var results = yolo.RunSegmentation(image, confidence: 0.3, pixelConfedence: 0.5, iou: 0.7);
+            var results = yolo.RunSegmentation(image, confidence: 0.5, pixelConfedence: 0.5, iou: 0.7);
             image.Draw(results, _drawingOptions);
 
             vm.ResultVM = new ResultVM
             {
                 FileName = vm.FormFile.FileName,
-                ImageBase64 = $"data:image/png;base64,{Convert.ToBase64String(image.Encode(SKEncodedImageFormat.Png, 100).ToArray())}",
-                Results = [.. results.Select(r => new Kerusakan { Segmentation = r, AdaUkuran = false })]
+                ImageBase64 = image.ToBase64String(),
+                Lebar = image.Width,
+                Tinggi = image.Height,
+                AdaKertas = false,
+                Results = [.. results.Select(r => new Kerusakan { Segmentation = r })]
             };
 
             var kertas = results.FirstOrDefault(s => s.Label.Name == LabelEnum.Kertas.ToString());
@@ -99,16 +108,21 @@ namespace DeteksiJalanRusak.Web.Controllers
             if (kertas is not null)
             {
                 var totalPixel = kertas.BitPackedPixelMask.Count(x => x != 0);
-                var luasPerPixel = LUAS_KERTAS_M2 / totalPixel;
-                var panjangPerPixel = Math.Sqrt(luasPerPixel);
+                var m2PerPixel = LUAS_KERTASA4_M2 / totalPixel;
 
+                var mPerPixel = PANJANG_KERTASA4_M / 
+                    (kertas.BoundingBox.Width > kertas.BoundingBox.Height ? kertas.BoundingBox.Width : kertas.BoundingBox.Height);
+
+                vm.ResultVM.AdaKertas = true;
+                vm.ResultVM.M2PerPiksel = m2PerPixel;
+                vm.ResultVM.MPerPiksel = mPerPixel;
                 vm.ResultVM.Results = [.. vm.ResultVM.Results.Select(x => new Kerusakan
                 {
                     Segmentation = x.Segmentation,
-                    AdaUkuran = true,
-                    Luas = x.Segmentation.BitPackedPixelMask.Count(x => x != 0) * luasPerPixel,
-                    Panjang = x.Segmentation.BoundingBox.Height * panjangPerPixel,
-                    Lebar = x.Segmentation.BoundingBox.Width * panjangPerPixel,
+                    Luas = x.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
+                    LuasPersegi = x.Segmentation.BoundingBox.Width * x.Segmentation.BoundingBox.Height * m2PerPixel,
+                    Panjang = x.Segmentation.BoundingBox.Height * mPerPixel,
+                    Lebar = x.Segmentation.BoundingBox.Width * mPerPixel,
                 })];
             }
 
