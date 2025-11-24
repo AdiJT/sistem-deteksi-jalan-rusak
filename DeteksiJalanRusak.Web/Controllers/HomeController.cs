@@ -65,21 +65,13 @@ namespace DeteksiJalanRusak.Web.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            if (vm.FormFile is null)
-            {
-                ModelState.AddModelError(nameof(IndexVM.FormFile), "Foto harus dipilih");
-                return View(vm);
-            }
+            var tasks = vm.FormFiles.Select(x => _fileService.ProcessFormFile<IndexVM>(x, [".jpg", ".jpeg", ".png"], 0, long.MaxValue)).ToList();
+            var daftarFoto = await Task.WhenAll(tasks);
 
-            var foto = await _fileService.ProcessFormFile<IndexVM>(
-                vm.FormFile,
-                [".jpeg", ".jpg", ".png"],
-                0,
-                long.MaxValue);
-
-            if (foto.IsFailure)
+            var failures = daftarFoto.Where(x => x.IsFailure);
+            if (failures.Any())
             {
-                ModelState.AddModelError(nameof(IndexVM.FormFile), foto.Error.Message);
+                ModelState.AddModelError(nameof(IndexVM.FormFiles), string.Join("\n", failures.Select(x => x.Error.Message)));
                 return View(vm);
             }
 
@@ -91,49 +83,88 @@ namespace DeteksiJalanRusak.Web.Controllers
                 SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None)
             });
 
-            using var image = SKBitmap.Decode(foto.Value);
-            var results = yolo.RunSegmentation(image, confidence: 0.5, pixelConfedence: 0.5, iou: 0.7);
-            image.Draw(results, _drawingOptions);
+            var dvMax = 0d;
 
-            vm.ResultVM = new ResultVM
+            foreach(var foto in daftarFoto)
             {
-                FileName = vm.FormFile.FileName,
-                ImageBase64 = image.ToBase64String(),
-                Lebar = image.Width,
-                Tinggi = image.Height,
-                Kertas = null,
-                Results = [.. results.Where(r => r.Label.Name != LabelEnum.Kertas.ToString()).Select(r => new Kerusakan { Segmentation = r })]
-            };
+                using var image = SKBitmap.Decode(foto.Value);
+                var results = yolo.RunSegmentation(image, confidence: 0.5, pixelConfedence: 0.5, iou: 0.7);
+                image.Draw(results, _drawingOptions);
 
-            var kertas = results.FirstOrDefault(s => s.Label.Name == LabelEnum.Kertas.ToString());
-
-            if (kertas is not null)
-            {
-                var totalPixel = kertas.BitPackedPixelMask.Count(x => x != 0);
-                var m2PerPixel = LUAS_KERTASA4_M2 / totalPixel;
-
-                var mPerPixel = PANJANG_KERTASA4_M / 
-                    (kertas.BoundingBox.Width > kertas.BoundingBox.Height ? kertas.BoundingBox.Width : kertas.BoundingBox.Height);
-
-                vm.ResultVM.Kertas = new Kerusakan
+                var resultVM = new ResultVM
                 {
-                    Segmentation = kertas,
-                    Luas = kertas.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
-                    Panjang = kertas.BoundingBox.Height * mPerPixel,
-                    Lebar = kertas.BoundingBox.Width * mPerPixel,
+                    FileName = vm.FormFiles[Array.IndexOf(daftarFoto, foto)].FileName,
+                    ImageBase64 = image.ToBase64String(),
+                    Lebar = image.Width,
+                    Tinggi = image.Height,
+                    Kertas = null,
+                    Results = [.. results.Where(r => r.Label.Name != LabelEnum.Kertas.ToString()).Select(r => new Kerusakan { Segmentation = r })]
                 };
 
-                vm.ResultVM.M2PerPiksel = m2PerPixel;
-                vm.ResultVM.MPerPiksel = mPerPixel;
+                var kertas = results.FirstOrDefault(s => s.Label.Name == LabelEnum.Kertas.ToString());
 
-                foreach(var kerusakan in vm.ResultVM.Results)
+                if (kertas is not null)
                 {
-                    kerusakan.Luas = kerusakan.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel;
-                    kerusakan.Panjang = kerusakan.Segmentation.BoundingBox.Height * mPerPixel;
-                    kerusakan.Lebar = kerusakan.Segmentation.BoundingBox.Width * mPerPixel;
-                    kerusakan.DistressDensity = kerusakan.Luas / vm.LuasSampel;
+                    var totalPixel = kertas.BitPackedPixelMask.Count(x => x != 0);
+                    var m2PerPixel = LUAS_KERTASA4_M2 / totalPixel;
+
+                    var mPerPixel = PANJANG_KERTASA4_M /
+                        (kertas.BoundingBox.Width > kertas.BoundingBox.Height ? kertas.BoundingBox.Width : kertas.BoundingBox.Height);
+
+                    resultVM.Kertas = new Kerusakan
+                    {
+                        Segmentation = kertas,
+                        Luas = kertas.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
+                        Panjang = kertas.BoundingBox.Height * mPerPixel,
+                        Lebar = kertas.BoundingBox.Width * mPerPixel,
+                    };
+
+                    resultVM.M2PerPiksel = m2PerPixel;
+                    resultVM.MPerPiksel = mPerPixel;
+
+                    foreach (var kerusakan in resultVM.Results)
+                    {
+                        kerusakan.Luas = kerusakan.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel;
+                        kerusakan.Panjang = kerusakan.Segmentation.BoundingBox.Height * mPerPixel;
+                        kerusakan.Lebar = kerusakan.Segmentation.BoundingBox.Width * mPerPixel;
+                        kerusakan.DistressDensity = kerusakan.Luas / vm.LuasSampel;
+                    }
+
+                    dvMax = Math.Max(dvMax, resultVM.Results.Aggregate(0d, (max, x) => Math.Max(max, x.DeductValue)));
                 }
+
+                vm.ResultVMs.Add(resultVM);
             }
+
+            var resultWithMeasure = vm.ResultVMs.Where(x => x.Kertas is not null).ToList();
+
+            if (resultWithMeasure.Count == 0) return View(vm);
+
+            var daftarDV = resultWithMeasure
+                .SelectMany(x => x.Results)
+                .Select(x => x.DeductValue)
+                .OrderByDescending(x => x)
+                .Take(DistressDensityToDV.QMAX)
+                .ToList();
+
+            var q = Math.Clamp(daftarDV.Count(x => x > 2), DistressDensityToDV.QMIN, DistressDensityToDV.QMAX);
+
+            var mi = 1 + (9 / 98 * (100 - dvMax));
+            var tdv = daftarDV.Sum();
+            var cdvMax = DistressDensityToDV.TdvToCdv(tdv, q);
+
+            for(int i = q - 1; i >= 1; i--)
+            {
+                tdv = daftarDV.Take(i).Sum() + 2 * q - i;
+                cdvMax = Math.Max(cdvMax, DistressDensityToDV.TdvToCdv(tdv, i));
+            }
+
+            var pci = 100 - cdvMax;
+
+            vm.PCI = pci;
+            vm.CDVMax = cdvMax;
+            vm.TDV = daftarDV.Sum();
+            vm.MI = mi;
 
             return View(vm);
         }

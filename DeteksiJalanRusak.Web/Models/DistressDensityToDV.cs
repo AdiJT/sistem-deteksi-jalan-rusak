@@ -137,27 +137,27 @@ public static class DistressDensityToDV
 
         var x = new List<double[]>()
         {
-            new double[] { 0, 100 },
-            new double[] { 14, },
-            new double[] { },
-            new double[] { },
-            new double[] { },
-            new double[] { },
-            new double[] { }
+            new double[] { 0, 50, 100 },
+            new double[] { 14, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 166 },
+            new double[] { 19, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 181},
+            new double[] { 26, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200 },
+            new double[] { 28, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200 },
+            new double[] { 42, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200 },
+            new double[] { 42, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200 }
         };
 
         var y = new List<double[]>()
         {
-            new double[] { 0, 100 },
-            new double[] { },
-            new double[] { },
-            new double[] { },
-            new double[] { },
-            new double[] { },
-            new double[] { }
+            new double[] { 0, 50, 100 },
+            new double[] { 9, 14, 22, 29.5, 37.5, 44.5, 51, 58, 64.5, 71, 76.5, 81.5, 86, 90.5, 94.5, 98, 100 },
+            new double[] { 9, 9.5, 17, 24, 31.5, 38, 44.5, 51, 57.5, 63.5, 69, 74, 79, 84, 88, 92.5, 96, 99.75, 100 },
+            new double[] { 9, 12, 19.5, 26, 33, 39, 45, 52, 57.5, 63, 68.75, 74, 78.5, 83, 87, 90.5, 94, 96.5, 98 },
+            new double[] { 9, 10, 16.5, 23, 29, 35.5, 40.5, 46.5, 52, 58, 63, 68, 72.5, 77, 81, 85, 88.5, 91, 94 },
+            new double[] { 15.5, 20, 26, 32, 38, 44, 48.5, 54, 59, 64, 68, 73, 78, 81.5, 85, 88, 90 },
+            new double[] { 15.5, 20, 26, 32, 38, 44, 48.5, 54, 59, 64, 68, 71, 74.5, 78, 80, 81, 82 },
         };
 
-        return CubicSpline.InterpolatePchipSorted(x[q], y[q]).Interpolate(tdv);
+        return CubicSpline.InterpolatePchipSorted(x[q-1], y[q-1]).Interpolate(tdv);
     }
 
     public static KondisiKerusakan Kondisi(LabelEnum labelEnum, double luas, double panjang, double lebar)
