@@ -18,3 +18,4 @@
     "AllowedHosts": "*"
   }
   ```
+- Foto untuk download dari https://drive.google.com/drive/folders/1hLCrvjdHSCe4C-ZJfcG8NClDZAVL4KIs?usp=drive_link
