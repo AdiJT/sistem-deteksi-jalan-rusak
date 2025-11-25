@@ -3,7 +3,8 @@
 - Di project DeteksiJalanRusak.Web klik kanan pilih Add > New Item.
 - Di jendela yang terbuka, pilih di bagian samping kiri C# > ASP.NET Core > Web > ASP.NET. Kemudian klik file App Settings File
 - Beri nama file baru appsettings.Development.json kemudian buka file paste :
-  ``
+  
+  ```json
   {
     "FileConfiguration": {
       "FolderPath": "/file"
@@ -16,4 +17,4 @@
   },
     "AllowedHosts": "*"
   }
-  ``
+  ```
