@@ -14,8 +14,6 @@ public class IndexVM
     public double LuasSampel { get; set; } = 200;
 
     public List<ResultVM> ResultVMs { get; set; } = [];
-    public double PCI { get; set; }
-    public double CDVMax { get; set; }
-    public double TDV { get; set; }
-    public double MI { get; set; }
+    public List<DensityDV> DensityDVs{ get; set; } = [];
+    public PCIResult? PCIResult { get; set; }
 }

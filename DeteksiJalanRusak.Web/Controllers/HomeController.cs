@@ -83,9 +83,7 @@ namespace DeteksiJalanRusak.Web.Controllers
                 SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None)
             });
 
-            var dvMax = 0d;
-
-            foreach(var foto in daftarFoto)
+            foreach (var foto in daftarFoto)
             {
                 using var image = SKBitmap.Decode(foto.Value);
                 var results = yolo.RunSegmentation(image, confidence: 0.5, pixelConfedence: 0.5, iou: 0.7);
@@ -127,44 +125,49 @@ namespace DeteksiJalanRusak.Web.Controllers
                         kerusakan.Luas = kerusakan.Segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel;
                         kerusakan.Panjang = kerusakan.Segmentation.BoundingBox.Height * mPerPixel;
                         kerusakan.Lebar = kerusakan.Segmentation.BoundingBox.Width * mPerPixel;
-                        kerusakan.DistressDensity = kerusakan.Luas / vm.LuasSampel;
                     }
-
-                    dvMax = Math.Max(dvMax, resultVM.Results.Aggregate(0d, (max, x) => Math.Max(max, x.DeductValue)));
                 }
 
                 vm.ResultVMs.Add(resultVM);
             }
 
-            var resultWithMeasure = vm.ResultVMs.Where(x => x.Kertas is not null).ToList();
-
-            if (resultWithMeasure.Count == 0) return View(vm);
-
-            var daftarDV = resultWithMeasure
+            vm.DensityDVs = [.. vm.ResultVMs
+                .Where(x => x.Kertas is not null)
                 .SelectMany(x => x.Results)
-                .Select(x => x.DeductValue)
-                .OrderByDescending(x => x)
-                .Take(DistressDensityToDV.QMAX)
-                .ToList();
+                .GroupBy(x => new { x.Label, x.Kondisi })
+                .Select(x => new DensityDV
+                {
+                    DistressDensity = x.Sum(y => y.Luas) / vm.LuasSampel,
+                    TotalLuas = x.Sum(y => y.Luas),
+                    Kondisi = x.Key.Kondisi,
+                    Label = x.Key.Label
+                })
+                .OrderByDescending(x => x.DeductValue)];
 
-            var q = Math.Clamp(daftarDV.Count(x => x > 2), DistressDensityToDV.QMIN, DistressDensityToDV.QMAX);
-
-            var mi = 1 + (9 / 98 * (100 - dvMax));
-            var tdv = daftarDV.Sum();
-            var cdvMax = DistressDensityToDV.TdvToCdv(tdv, q);
-
-            for(int i = q - 1; i >= 1; i--)
+            if (vm.DensityDVs.Count != 0)
             {
-                tdv = daftarDV.Take(i).Sum() + 2 * q - i;
-                cdvMax = Math.Max(cdvMax, DistressDensityToDV.TdvToCdv(tdv, i));
+                var q = Math.Clamp(vm.DensityDVs.Count(x => x.DeductValue > 2), DistressDensityToDV.QMIN, DistressDensityToDV.QMAX);
+                var dvMax = vm.DensityDVs.Select(x => x.DeductValue).Max();
+                var mi = 1 + (9 / 98 * (100 - dvMax));
+                var tdv = vm.DensityDVs.Sum(x => x.DeductValue);
+                var cdvMax = DistressDensityToDV.TdvToCdv(tdv, q);
+
+                for (int i = q - 1; i >= 1; i--)
+                {
+                    tdv = vm.DensityDVs.Take(i).Sum(x => x.DeductValue) + 2 * q - i;
+                    cdvMax = Math.Max(cdvMax, DistressDensityToDV.TdvToCdv(tdv, i));
+                }
+
+                var pci = 100 - cdvMax;
+
+                vm.PCIResult = new PCIResult
+                {
+                    PCI = pci,
+                    CDVMax = cdvMax,
+                    TDV = vm.DensityDVs.Sum(x => x.DeductValue),
+                    MI = mi,
+                };
             }
-
-            var pci = 100 - cdvMax;
-
-            vm.PCI = pci;
-            vm.CDVMax = cdvMax;
-            vm.TDV = daftarDV.Sum();
-            vm.MI = mi;
 
             return View(vm);
         }

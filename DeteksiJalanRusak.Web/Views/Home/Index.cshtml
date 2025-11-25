@@ -33,6 +33,60 @@
         <h3>Ukuran Kertas Asli</h3>
         <p>Dimensi Kertas (m) : @HomeController.PANJANG_KERTASA4_M x @HomeController.LEBAR_KERTASA4_M</p>
         <p>Luas Kertas (m<sup>2</sup>) : @HomeController.LUAS_KERTASA4_M2 </p>
+
+        @if(Model.PCIResult is not null) 
+        {
+            <h3>DV</h3>
+            <table class="table-bordered table">
+                <thead>
+                    <tr>
+                        <th>Kerusakan</th>
+                        <th>Kondisi</th>
+                        <th>Total Luas</th>
+                        <th>Density</th>
+                        <th>Deduct Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var densityDv in Model.DensityDVs)
+                    {
+                        <tr>
+                            <td>@densityDv.Label.Humanize()</td>
+                            <td>@densityDv.Kondisi</td>
+                            <td>@densityDv.TotalLuas.ToString("F5") m<sup>2</sup></td>
+                            <td>@densityDv.DistressDensity.ToString("F8")</td>
+                            <td>@densityDv.DeductValue.ToString("F8")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h3>PCI</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>MI</th>
+                        <th>CDVMax</th>
+                        <th>TDV</th>
+                        <th>PCI</th>
+                        <th>Kondisi</th>
+                        <th>Jenis Penanganan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.PCIResult.MI</td>
+                        <td>@Model.PCIResult.CDVMax</td>
+                        <td>@Model.PCIResult.TDV</td>
+                        <td>@Model.PCIResult.PCI</td>
+                        <td>@Model.PCIResult.Kondisi</td>
+                        <td>@Model.PCIResult.JenisPenanganan</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <h3>Daftar Kerusakan</h3>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -44,7 +98,7 @@
                     <th rowspan="2">Panjang (Kertas)</th>
                     <th rowspan="2">Lebar (Kertas)</th>
                     <th rowspan="2">Mask (Kertas)</th>
-                    <th colspan="9">Kerusakan</th>
+                    <th colspan="7">Kerusakan</th>
                 </tr>
                 <tr>
                     <th>Jenis</th>
@@ -53,8 +107,6 @@
                     <th>Panjang</th>
                     <th>Lebar</th>
                     <th>Kondisi</th>
-                    <th>Distress Density</th>
-                    <th>DV</th>
                     <th>Mask</th>
                 </tr>
             </thead>
@@ -95,12 +147,10 @@
                                 <td>@kerusakan.Panjang.ToString("F5") m</td>
                                 <td>@kerusakan.Lebar.ToString("F5") m</td>
                                 <td>@kerusakan.Kondisi</td>
-                                <td>@kerusakan.DistressDensity.ToString("F5") %</td>
-                                <td>@kerusakan.DeductValue.ToString("F5")</td>
                             }
                             else
                             {
-                                <td rowspan="@rowspan - 1" colspan="7">Objek Pengukur (Kertas) tidak ditemukan</td>
+                                <td rowspan="@rowspan - 1" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
                             }
                             <td>
                                 <p>@kerusakan.Segmentation.BoundingBox.Width x @kerusakan.Segmentation.BoundingBox.Height Pixel</p>
