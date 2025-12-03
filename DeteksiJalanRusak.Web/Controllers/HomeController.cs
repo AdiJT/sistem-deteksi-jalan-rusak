@@ -137,8 +137,8 @@ namespace DeteksiJalanRusak.Web.Controllers
                 .GroupBy(x => new { x.Label, x.Kondisi })
                 .Select(x => new DensityDV
                 {
-                    DistressDensity = x.Sum(y => y.Luas) / vm.LuasSampel,
-                    TotalLuas = x.Sum(y => y.Luas),
+                    DistressDensity = x.Sum(y => y.LuasPersegi) / vm.LuasSampel * 100,
+                    TotalLuas = x.Sum(y => y.LuasPersegi),
                     Kondisi = x.Key.Kondisi,
                     Label = x.Key.Label
                 })
