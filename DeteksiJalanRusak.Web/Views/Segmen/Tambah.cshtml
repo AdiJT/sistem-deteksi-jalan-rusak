@@ -1,0 +1,27 @@
+﻿@using DeteksiJalanRusak.Web.Models.SegmenModels
+@model TambahVM
+
+<form asp-action="Tambah" asp-route-idAnalisis="@Model.IdAnalisis" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <label asp-for="@Model.FormFiles"></label>
+        <input asp-for="@Model.FormFiles" type="file" multiple class="form-control"/>
+        <span asp-validation-for="@Model.FormFiles" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <label asp-for="@Model.LuasSampel"></label>
+        <input asp-for="@Model.LuasSampel" class="form-control"/>
+        <span asp-validation-for="@Model.LuasSampel" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.IdAnalisis" class="btn btn-danger">Batal</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

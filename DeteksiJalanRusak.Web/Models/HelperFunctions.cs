@@ -1,8 +1,9 @@
 ﻿using MathNet.Numerics.Interpolation;
+using OpenCvSharp;
 
 namespace DeteksiJalanRusak.Web.Models;
 
-public static class DistressDensityToDV
+public static class HelperFunctions
 {
     private static readonly double[] _x = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
@@ -198,6 +199,32 @@ public static class DistressDensityToDV
                 throw new NotImplementedException();
         }
     }
+
+    public static string KondisiPCI(double pci) =>
+        pci switch
+        {
+            >= 0 and <= 10 => "Gagal (Failed)",
+            >= 11 and <= 25 => "Sangat Buruk (Very Poor)",
+            >= 26 and <= 40 => "Buruk (Poor)",
+            >= 41 and <= 55 => "Sedang (Fair)",
+            >= 56 and <= 70 => "Baik (Good)",
+            >= 71 and <= 85 => "Sangat Baik (Very Good)",
+            >= 86 and <= 100 => "Sempuran (Excelent)",
+            _ => throw new NotImplementedException()
+        };
+
+    public static string JenisPenangananPCI(double pci) =>
+        pci switch
+        {
+            >= 0 and <= 10 => "Rekonstruksi",
+            >= 11 and <= 25 => "Rekonstruksi",
+            >= 26 and <= 40 => "Berkala",
+            >= 41 and <= 55 => "Rutin",
+            >= 56 and <= 70 => "Rutin",
+            >= 71 and <= 85 => "Rutin",
+            >= 86 and <= 100 => "Rutin",
+            _ => throw new NotImplementedException(),
+        };
 }
 
 public enum KondisiKerusakan

@@ -1,4 +1,4 @@
-﻿namespace DeteksiJalanRusak.Web.Models.Home;
+﻿namespace DeteksiJalanRusak.Web.Models;
 
 public class DensityDV
 {
@@ -7,5 +7,5 @@ public class DensityDV
     public required double DistressDensity { get; set; }
     public required double TotalLuas { get; set; }
 
-    public double DeductValue => DistressDensityToDV.DDToDV(Label, DistressDensity, Kondisi);
+    public double DeductValue => HelperFunctions.DDToDV(Label, DistressDensity, Kondisi);
 }

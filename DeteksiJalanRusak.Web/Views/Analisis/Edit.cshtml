@@ -1,0 +1,33 @@
+﻿@using DeteksiJalanRusak.Web.Models.AnalisisModels
+@model EditVM
+
+<form asp-action="Edit" asp-route-id="@Model.Id">
+    <<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    div class="row">
+        <label asp-for="@Model.Nama"></label>
+        <input asp-for="@Model.Nama" class="form-control"/>
+        <span asp-validation-for="@Model.Nama" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <label asp-for="@Model.Lokasi"></label>
+        <input asp-for="@Model.Lokasi" class="form-control"/>
+        <span asp-validation-for="@Model.Lokasi" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <label asp-for="@Model.Pembuat"></label>
+        <input asp-for="@Model.Pembuat" class="form-control"/>
+        <span asp-validation-for="@Model.Pembuat" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a asp-action="Index" class="btn btn-danger">Batal</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
