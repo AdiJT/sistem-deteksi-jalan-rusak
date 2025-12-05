@@ -1,7 +1,8 @@
 using DeteksiJalanRusak.Web.Configurations;
+using DeteksiJalanRusak.Web.Database;
 using DeteksiJalanRusak.Web.Services.FileServices;
-using MathNet.Numerics;
-using Microsoft.Extensions.Configuration;
+using DeteksiJalanRusak.Web.Services.Toastr;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,16 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.Configure<ModelConfigurationOptions>(builder.Configuration.GetSection(ModelConfigurationOptions.ModelConfigurationOption));
 builder.Services.AddScoped(sp => sp.GetRequiredService<IOptionsSnapshot<ModelConfigurationOptions>>().Value);
+
+var connectionString = builder.Configuration.GetConnectionString("Default") 
+    ?? throw new NullReferenceException("connection string 'Default' is null");
+
+builder.Services.AddDbContext<AppDbContext>(options => options
+    .UseNpgsql(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+    .EnableSensitiveDataLogging());
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IToastrNotificationService, ToastrNotificationService>();
 
 var app = builder.Build();
 

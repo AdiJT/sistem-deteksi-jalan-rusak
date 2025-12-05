@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DeteksiJalanRusak.Web.Models.Home;
+namespace DeteksiJalanRusak.Web.Models.SegmenModels;
 
-public class IndexVM
+public class TambahVM
 {
     [Display(Name = "Foto-Foto Kerusakan dan Kertas (.jpg, .jpeg, .png)")]
     [Required(ErrorMessage = "Minimal 1 foto harus dipilih")]
@@ -13,7 +13,5 @@ public class IndexVM
     [Required(ErrorMessage = "Harus diisi")]
     public double LuasSampel { get; set; } = 200;
 
-    public List<ResultVM> ResultVMs { get; set; } = [];
-    public List<DensityDV> DensityDVs{ get; set; } = [];
-    public PCIResult? PCIResult { get; set; }
+    public required int IdAnalisis { get; set; }
 }

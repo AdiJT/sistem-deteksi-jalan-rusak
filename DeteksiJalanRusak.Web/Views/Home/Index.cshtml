@@ -1,169 +1,27 @@
-﻿@using DeteksiJalanRusak.Web.Controllers
-@using DeteksiJalanRusak.Web.Extensions
-@using DeteksiJalanRusak.Web.Models.Home
-@using Humanizer
-@using SkiaSharp
-@using YoloDotNet.Extensions
-@model IndexVM
+﻿@model List<Analisis>
 
-@{
-    ViewData["Title"] = "Home Page";
-}
+<a asp-action="Tambah" asp-controller="Analisis" class="btn btn-primary">Buat Analisis Baru</a>
 
-<div class="row">
-    <div class="col-12">
-        <form asp-action="Index" enctype="multipart/form-data">
-            <div class="row mb-3">
-                <label asp-for="@Model.FormFiles" class="form-label"></label>
-                <input asp-for="@Model.FormFiles" class="form-control" type="file" multiple />
-                <span asp-validation-for="@Model.FormFiles" class="text-danger"></span>
-            </div>
-
-            <div class="row mb-3">
-                <label asp-for="@Model.LuasSampel" class="form-label"></label>
-                <input asp-for="@Model.LuasSampel" class="form-control" />
-                <span asp-validation-for="@Model.LuasSampel" class="text-danger"></span>
-            </div>
-
-            <button type="submit">Upload</button>
-        </form>
-    </div>
-    @if (Model.ResultVMs.Count != 0)
-    {
-        <h3>Ukuran Kertas Asli</h3>
-        <p>Dimensi Kertas (m) : @HomeController.PANJANG_KERTASA4_M x @HomeController.LEBAR_KERTASA4_M</p>
-        <p>Luas Kertas (m<sup>2</sup>) : @HomeController.LUAS_KERTASA4_M2 </p>
-
-        @if(Model.PCIResult is not null) 
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Pembuat</th>
+            <th>Lokasi</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var analisis in Model)
         {
-            <h3>DV</h3>
-            <table class="table-bordered table">
-                <thead>
-                    <tr>
-                        <th>Kerusakan</th>
-                        <th>Kondisi</th>
-                        <th>Total Luas</th>
-                        <th>Density</th>
-                        <th>Deduct Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var densityDv in Model.DensityDVs)
-                    {
-                        <tr>
-                            <td>@densityDv.Label.Humanize()</td>
-                            <td>@densityDv.Kondisi</td>
-                            <td>@densityDv.TotalLuas.ToString("F5") m<sup>2</sup></td>
-                            <td>@densityDv.DistressDensity.ToString("F8")</td>
-                            <td>@densityDv.DeductValue.ToString("F8")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <h3>PCI</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>MI</th>
-                        <th>CDVMax</th>
-                        <th>TDV</th>
-                        <th>PCI</th>
-                        <th>Kondisi</th>
-                        <th>Jenis Penanganan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@Model.PCIResult.MI</td>
-                        <td>@Model.PCIResult.CDVMax</td>
-                        <td>@Model.PCIResult.TDV</td>
-                        <td>@Model.PCIResult.PCI</td>
-                        <td>@Model.PCIResult.Kondisi</td>
-                        <td>@Model.PCIResult.JenisPenanganan</td>
-                    </tr>
-                </tbody>
-            </table>
+            <tr>
+                <td>@analisis.Nama</td>
+                <td>@analisis.Pembuat</td>
+                <td>@analisis.Lokasi</td>
+                <td>
+                    <a class="btn btn-warning" asp-action="Detail" asp-controller="Analisis" asp-route-id="@analisis.Id">Detail</a>
+                </td>
+            </tr>
         }
-
-        <h3>Daftar Kerusakan</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th rowspan="2"></th>
-                    <th rowspan="2">File Name</th>
-                    <th rowspan="2">Ukuran Foto</th>
-                    <th rowspan="2">Luas (Kertas)</th>
-                    <th rowspan="2">Luas Persegi (Kertas)</th>
-                    <th rowspan="2">Panjang (Kertas)</th>
-                    <th rowspan="2">Lebar (Kertas)</th>
-                    <th rowspan="2">Mask (Kertas)</th>
-                    <th colspan="7">Kerusakan</th>
-                </tr>
-                <tr>
-                    <th>Jenis</th>
-                    <th>Luas</th>
-                    <th>Luas Persegi</th>
-                    <th>Panjang</th>
-                    <th>Lebar</th>
-                    <th>Kondisi</th>
-                    <th>Mask</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var result in Model.ResultVMs)
-                {
-                    var rowspan = result.Results.Count + 1;
-                    <tr>
-                        <td rowspan="@rowspan">
-                            <img src="@result.ImageBase64" height="200" />
-                        </td>
-                        <td rowspan="@rowspan">@result.FileName</td>
-                        <td rowspan="@rowspan">@result.Lebar x @result.Tinggi Pixel</td>
-                        @if (result.Kertas is not null)
-                        {
-                            <td rowspan="@rowspan">@result.Kertas.Luas m<sup>2</sup></td>
-                            <td rowspan="@rowspan">@result.Kertas.LuasPersegi m<sup>2</sup></td>
-                            <td rowspan="@rowspan">@result.Kertas.Panjang m</td>
-                            <td rowspan="@rowspan">@result.Kertas.Lebar m</td>
-                            <td rowspan="@rowspan">
-                                <p>@result.Kertas.Segmentation.BoundingBox.Width x @result.Kertas.Segmentation.BoundingBox.Height Pixel</p>
-                                <img style="background-color:black" src="@result.Kertas.MaskBase64" height="200" />
-                            </td>
-                        }
-                        else
-                        {
-                            <td rowspan="@rowspan" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
-                        }
-                    </tr>
-                    @foreach (var kerusakan in result.Results)
-                    {
-                        <tr>
-                            <td>@kerusakan.Label.Humanize()</td>
-                            @if (result.Kertas is not null)
-                            {
-                                <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
-                                <td>@kerusakan.LuasPersegi.ToString("F5") m<sup>2</sup></td>
-                                <td>@kerusakan.Panjang.ToString("F5") m</td>
-                                <td>@kerusakan.Lebar.ToString("F5") m</td>
-                                <td>@kerusakan.Kondisi</td>
-                            }
-                            else
-                            {
-                                <td rowspan="@rowspan - 1" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
-                            }
-                            <td>
-                                <p>@kerusakan.Segmentation.BoundingBox.Width x @kerusakan.Segmentation.BoundingBox.Height Pixel</p>
-                                <img style="background-color:black" src="@kerusakan.MaskBase64" height="200" />
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    }
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    </tbody>
+</table>
