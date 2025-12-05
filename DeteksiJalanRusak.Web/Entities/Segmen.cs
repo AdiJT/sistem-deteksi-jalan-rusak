@@ -26,8 +26,8 @@ public class Segmen
         var densityDVs = DensityDVs();
         if (densityDVs.Count == 0) return null;
 
-        var dvMoreThan2 = densityDVs.Where(x => x.DeductValue > 2).OrderByDescending(x => x.DeductValue);
-        var dv2OrLess = densityDVs.Where(x => x.DeductValue <= 2).OrderByDescending(x => x.DeductValue);
+        var dvMoreThan2 = densityDVs.Where(x => x.DeductValue > 2d).OrderByDescending(x => x.DeductValue);
+        var dv2OrLess = densityDVs.Where(x => x.DeductValue <= 2d).OrderByDescending(x => x.DeductValue);
         var dvMax = densityDVs.Select(x => x.DeductValue).Max();
         var mi = 1 + (9 / 98 * (100 - dvMax));
 
@@ -40,7 +40,7 @@ public class Segmen
 
         for (int i = q - 1; i >= 1; i--)
         {
-            tdv = dvMoreThan2.Take(i).Sum(x => x.DeductValue) + (2 * (q - i)) + dv2OrLess.Sum(x => x.DeductValue);
+            tdv = dvMoreThan2.Take(i).Sum(x => x.DeductValue) + (2d * (q - i)) + dv2OrLess.Sum(x => x.DeductValue);
             var cdv = HelperFunctions.TdvToCdv(tdv, i);
             if (cdv > cdvMax)
             {
