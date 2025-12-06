@@ -194,6 +194,44 @@ public class SegmenController : Controller
         return RedirectToActionPermanent("Detail", new { id = segmen.Id });
     }
 
+    public async Task<IActionResult> Edit(int id, string? returnUrl = null)
+    {
+        var segmen = await _appDbContext.TblSegmen.Include(x => x.Analisis).FirstOrDefaultAsync(x => x.Id == id);
+        if (segmen is null) return NotFound();
+
+        return View(new EditVM
+        {
+            Id = id,
+            LuasSampel = segmen.LuasSampel,
+            ReturnUrl = returnUrl ?? Url.ActionLink("Detail", "Analisis", new { id = segmen.Analisis.Id })!
+        });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditVM vm)
+    {
+        if (!ModelState.IsValid) return View(vm);
+
+        var segmen = await _appDbContext.TblSegmen.Include(x => x.Analisis).FirstOrDefaultAsync(x => x.Id == vm.Id);
+        if (segmen is null) return NotFound();
+
+        segmen.LuasSampel = vm.LuasSampel;
+
+        try
+        {
+            await _appDbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _notificationService.AddError("Simpan Gagal");
+            _logger.LogError(ex.ToString());
+            return View(vm);
+        }
+
+        _notificationService.AddSuccess("Simpan Berhasil");
+        return RedirectPermanent(vm.ReturnUrl);
+    }
+
     public async Task<IActionResult> Detail(int id)
     {
         var segmen = await _appDbContext

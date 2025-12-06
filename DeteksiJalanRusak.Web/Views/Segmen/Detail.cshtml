@@ -2,6 +2,10 @@
 @model Segmen
 
 @{
+    ViewData["Title"] = "Detail Segmen";
+}
+
+@{
     var densityDvs = Model.DensityDVs();
     var pciResult = Model.MetodePCI();
 }
@@ -11,6 +15,14 @@
         <h4>Detail Segmen</h4>
         <div class="ml-auto">
             <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.Analisis.Id" class="btn btn-primary">Kembali</a>
+        </div>
+        <div class="ml-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.AbsoluteUri()" class="btn btn-warning">Edit</a>
+        </div>
+        <div class="ml-2">
+            <form asp-action="Hapus" asp-route-id="@Model.Id" style="display:inline">
+                <button class="btn btn-danger">Hapus</button>
+            </form>
         </div>
     </div>
     <div class="card-body">

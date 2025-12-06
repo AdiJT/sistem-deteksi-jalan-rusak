@@ -1,4 +1,4 @@
-﻿namespace DeteksiJalanRusak.Web.Shared;
+﻿namespace DeteksiJalanRusak.Web.Services.Shared;
 
 public record Error(string Code, string Message)
 {

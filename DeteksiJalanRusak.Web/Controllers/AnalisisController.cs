@@ -23,8 +23,6 @@ public class AnalisisController : Controller
         _logger = logger;
     }
 
-    public async Task<IActionResult> Index() => View(await _context.TblAnalisis.ToListAsync());
-
     public async Task<IActionResult> Detail(int id)
     {
         var analisis = await _context
@@ -71,7 +69,7 @@ public class AnalisisController : Controller
         }
 
         _notificationService.AddSuccess("Simpan Berhasil");
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index", "Home");
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -119,7 +117,7 @@ public class AnalisisController : Controller
         }
 
         _notificationService.AddSuccess("Simpan Berhasil");
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
@@ -143,6 +141,6 @@ public class AnalisisController : Controller
         }
 
         _notificationService.AddSuccess("Simpan Berhasil");
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index", "Home");
     }
 }

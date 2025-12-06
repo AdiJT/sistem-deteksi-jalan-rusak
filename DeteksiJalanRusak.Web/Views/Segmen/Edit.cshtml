@@ -1,24 +1,18 @@
 ﻿@using DeteksiJalanRusak.Web.Models.SegmenModels
-@model TambahVM
+@model EditVM
 
 @{
-    ViewData["Title"] = "Tambah Segmen";
+    ViewData["Title"] = "Edit Segmen";
 }
 
 <div class="card card-primary">
     <div class="card-header">
-        <h4> Tambah Segmen</h4>
+        <h4> Edit Segmen</h4>
     </div>
 
     <div class="card-body">
-        <form asp-action="Tambah" asp-route-idAnalisis="@Model.IdAnalisis" enctype="multipart/form-data">
+        <form asp-action="Edit" asp-route-id="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="@Model.FormFiles"></label>
-                <input asp-for="@Model.FormFiles" type="file" multiple class="form-control" />
-                <span asp-validation-for="@Model.FormFiles" class="text-danger"></span>
-            </div>
 
             <div class="form-group">
                 <label asp-for="@Model.LuasSampel"></label>
@@ -28,13 +22,11 @@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Simpan</button>
-                <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.IdAnalisis" class="btn btn-danger">Batal</a>
+                <a href="@Model.ReturnUrl" class="btn btn-danger">Batal</a>
             </div>
         </form>
     </div>
 </div>
-
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,6 +1,10 @@
 ﻿@using DeteksiJalanRusak.Web.Models.AnalisisModels
 @model TambahVM
 
+@{
+    ViewData["Title"] = "Tambah Analisis";
+}
+
 <div class="card card-primary">
     <div class="card-header">
         <h4>Buat Analisis Baru</h4>
@@ -30,7 +34,7 @@
 
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Simpan</button>
-                <a asp-action="Index" class="btn btn-danger">Batal</a>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-danger">Batal</a>
             </div>
         </form>
 

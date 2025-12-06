@@ -6,15 +6,14 @@ namespace DeteksiJalanRusak.Web.Controllers
 {
     public class HomeController : Controller
     {
-        
-        private readonly AppDbContext _appDbContext;
+        private readonly AppDbContext _context;
 
-        public HomeController(AppDbContext appDbContext)
+        public HomeController(
+            AppDbContext context)
         {
-            
-            _appDbContext = appDbContext;
+            _context = context;
         }
 
-        public async Task<IActionResult> Index() => View(await _appDbContext.TblAnalisis.ToListAsync());
+        public async Task<IActionResult> Index() => View(await _context.TblAnalisis.ToListAsync());
     }
 }

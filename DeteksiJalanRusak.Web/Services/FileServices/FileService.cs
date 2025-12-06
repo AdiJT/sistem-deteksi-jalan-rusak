@@ -1,5 +1,5 @@
 ﻿using DeteksiJalanRusak.Web.Configurations;
-using DeteksiJalanRusak.Web.Shared;
+using DeteksiJalanRusak.Web.Services.Shared;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;

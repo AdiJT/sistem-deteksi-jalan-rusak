@@ -1,4 +1,4 @@
-﻿namespace DeteksiJalanRusak.Web.Shared;
+﻿namespace DeteksiJalanRusak.Web.Services.Shared;
 
 public class Result<T>
 {

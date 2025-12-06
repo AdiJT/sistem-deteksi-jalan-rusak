@@ -1,4 +1,4 @@
-﻿using DeteksiJalanRusak.Web.Shared;
+﻿using DeteksiJalanRusak.Web.Services.Shared;
 
 namespace DeteksiJalanRusak.Web.Services.FileServices;
 
