@@ -1,32 +1,41 @@
 ﻿@model List<Analisis>
 
-<a asp-action="Tambah" class="btn btn-primary">Buat Analisis Baru</a>
+<div class="card card-primary">
+    <div class="card-header">
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Pembuat</th>
-            <th>Lokasi</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var analisis in Model)
-        {
-            <tr>
-                <td>@analisis.Nama</td>
-                <td>@analisis.Pembuat</td>
-                <td>@analisis.Lokasi</td>
-                <td>
-                    <a class="btn btn-warning" asp-action="Detail" asp-route-id="@analisis.Id">Detail</a>
-                    <a class="btn btn-warning" asp-action="Edit" asp-controller="Analisis" asp-route-id="@analisis.Id">Edit</a>
+    </div>
 
-                    <form asp-action="Hapus" asp-route-id="@analisis.Id" style="display:inline">
-                        <button class="btn btn-danger" type="submit">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="card-body">
+        <a asp-action="Tambah" class="btn btn-primary">Buat Analisis Baru</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Pembuat</th>
+                    <th>Lokasi</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var analisis in Model)
+                {
+                    <tr>
+                        <td>@analisis.Nama</td>
+                        <td>@analisis.Pembuat</td>
+                        <td>@analisis.Lokasi</td>
+                        <td>
+                            <a class="btn btn-warning" asp-action="Detail" asp-route-id="@analisis.Id">Detail</a>
+                            <a class="btn btn-warning" asp-action="Edit" asp-controller="Analisis" asp-route-id="@analisis.Id">Edit</a>
+
+                            <form asp-action="Hapus" asp-route-id="@analisis.Id" style="display:inline">
+                                <button class="btn btn-danger" type="submit">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

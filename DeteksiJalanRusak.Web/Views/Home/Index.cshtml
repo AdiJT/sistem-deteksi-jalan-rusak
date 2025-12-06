@@ -1,27 +1,31 @@
 ﻿@model List<Analisis>
 
-<a asp-action="Tambah" asp-controller="Analisis" class="btn btn-primary">Buat Analisis Baru</a>
+<div class="card card-primary">
+    <div class="card-body">
+        <a asp-action="Tambah" asp-controller="Analisis" class="btn btn-primary">Buat Analisis Baru</a>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Pembuat</th>
-            <th>Lokasi</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var analisis in Model)
-        {
-            <tr>
-                <td>@analisis.Nama</td>
-                <td>@analisis.Pembuat</td>
-                <td>@analisis.Lokasi</td>
-                <td>
-                    <a class="btn btn-warning" asp-action="Detail" asp-controller="Analisis" asp-route-id="@analisis.Id">Detail</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Pembuat</th>
+                    <th>Lokasi</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var analisis in Model)
+                {
+                    <tr>
+                        <td>@analisis.Nama</td>
+                        <td>@analisis.Pembuat</td>
+                        <td>@analisis.Lokasi</td>
+                        <td>
+                            <a class="btn btn-warning" asp-action="Detail" asp-controller="Analisis" asp-route-id="@analisis.Id">Detail</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,88 +1,97 @@
 ﻿@model Analisis
 
-<p>Nama : @Model.Nama</p>
-<p>Lokasi : @Model.Lokasi</p>
-<p>Pembuat : @Model.Pembuat</p>
+<div class="card card-secondary">
+    <div class="card-header">
+        <h4>Detail Analisis</h4>
+    </div>
 
-<h1>Hasil Metode PCI</h1>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>PCI<sub>Avg</sub></th>
-            <th>Kondisi</th>
-            <th>Jenis Penanganan</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>@Model.RataRataPCI</td>
-            <td>@Model.Kondisi</td>
-            <td>@Model.JenisPenanganan</td>
-        </tr>
-    </tbody>
-</table>
+    <div class="card-body">
+        <p>Nama : @Model.Nama</p>
+        <p>Lokasi : @Model.Lokasi</p>
+        <p>Pembuat : @Model.Pembuat</p>
 
-<h1>Daftar Segmen</h1>
+        <h1>Hasil Metode PCI</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>PCI<sub>Avg</sub></th>
+                    <th>Kondisi</th>
+                    <th>Jenis Penanganan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.RataRataPCI</td>
+                    <td>@Model.Kondisi</td>
+                    <td>@Model.JenisPenanganan</td>
+                </tr>
+            </tbody>
+        </table>
 
-<a class="btn btn-primary" asp-action="Tambah" asp-controller="Segmen" asp-route-idAnalisis="@Model.Id">Tambah</a>
+        <h1>Daftar Segmen</h1>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>No.</th>
-            <th>Luas Sampel (m<sup>2</sup>)</th>
-            <th>PCI</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (int i = 0; i < Model.DaftarSegmen.Count; i++)
-        {
-            var segmen = Model.DaftarSegmen[i];
-            var pciResult = segmen.MetodePCI();
-            <tr>
-                <td>@(i + 1)</td>
-                <td>@segmen.LuasSampel</td>
-                @if (pciResult is not null)
+        <a class="btn btn-primary" asp-action="Tambah" asp-controller="Segmen" asp-route-idAnalisis="@Model.Id">Tambah</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Luas Sampel (m<sup>2</sup>)</th>
+                    <th>PCI</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.DaftarSegmen.Count; i++)
                 {
-                    <td>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Mi</th>
-                                    <th>q<sub>Max</sub></th>
-                                    <th>TDV<sub>Max</sub></th>
-                                    <th>CDV<sub>Max</sub></th>
-                                    <th>PCI</th>
-                                    <th>Kondisi</th>
-                                    <th>Jenis Penanganan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>@pciResult.MI</td>
-                                    <td>@pciResult.QMax</td>
-                                    <td>@pciResult.TDVMax</td>
-                                    <td>@pciResult.CDVMax</td>
-                                    <td>@pciResult.PCI</td>
-                                    <td>@pciResult.Kondisi</td>
-                                    <td>@pciResult.JenisPenanganan</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
+                    var segmen = Model.DaftarSegmen[i];
+                    var pciResult = segmen.MetodePCI();
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@segmen.LuasSampel</td>
+                        @if (pciResult is not null)
+                        {
+                            <td>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Mi</th>
+                                            <th>q<sub>Max</sub></th>
+                                            <th>TDV<sub>Max</sub></th>
+                                            <th>CDV<sub>Max</sub></th>
+                                            <th>PCI</th>
+                                            <th>Kondisi</th>
+                                            <th>Jenis Penanganan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@pciResult.MI</td>
+                                            <td>@pciResult.QMax</td>
+                                            <td>@pciResult.TDVMax</td>
+                                            <td>@pciResult.CDVMax</td>
+                                            <td>@pciResult.PCI</td>
+                                            <td>@pciResult.Kondisi</td>
+                                            <td>@pciResult.JenisPenanganan</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>Tidak Ada Hasil</td>
+                        }
+                        <td>
+                            <a asp-controller="Segmen" asp-action="Detail" asp-route-id="@segmen.Id" class="btn btn-warning">Detail</a>
+                            <form asp-controller="Segmen" asp-action="Hapus" asp-route-id="@segmen.Id" style="display:inherit">
+                                <button type="submit" class="btn btn-danger">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <td>Tidak Ada Hasil</td>
-                }
-                <td>
-                    <a asp-controller="Segmen" asp-action="Detail" asp-route-id="@segmen.Id" class="btn btn-warning">Detail</a>
-                    <form asp-controller="Segmen" asp-action="Hapus" asp-route-id="@segmen.Id" style="display:inherit">
-                        <button type="submit" class="btn btn-danger">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>
+
