@@ -80,6 +80,8 @@
             <th rowspan="2"></th>
             <th rowspan="2">File Name</th>
             <th rowspan="2">Ukuran Foto</th>
+            <th rowspan="2">m/pixel</th>
+            <th rowspan="2">m<sup>2</sup>/pixel</th>
             <th rowspan="2">Luas (Kertas)</th>
             <th rowspan="2">Luas Persegi (Kertas)</th>
             <th rowspan="2">Panjang (Kertas)</th>
@@ -109,6 +111,8 @@
                 <td rowspan="@rowspan">@foto.Lebar x @foto.Tinggi Pixel</td>
                 @if (foto.AdaKertas)
                 {
+                    <td rowspan="@rowspan">@foto.MPerPiksel.ToString("F10")</td>
+                    <td rowspan="@rowspan">@foto.M2PerPiksel.ToString("F10")</td>
                     <td rowspan="@rowspan">@foto.LuasKertas m<sup>2</sup></td>
                     <td rowspan="@rowspan">@foto.LuasPersegiKertas m<sup>2</sup></td>
                     <td rowspan="@rowspan">@foto.PanjangKertas m</td>
@@ -120,7 +124,7 @@
                 }
                 else
                 {
-                    <td rowspan="@rowspan" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
+                    <td rowspan="@rowspan" colspan="7">Objek Pengukur (Kertas) tidak ditemukan</td>
                 }
             </tr>
             @foreach (var kerusakan in foto.DaftarKerusakan)
