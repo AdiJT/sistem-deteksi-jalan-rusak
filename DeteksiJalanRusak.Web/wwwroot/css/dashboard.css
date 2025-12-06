@@ -996,7 +996,7 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
             }
 
     .navbar {
-        left: 5px;
+        left: 0;
         right: 0
     }
 

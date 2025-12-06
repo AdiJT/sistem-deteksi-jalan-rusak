@@ -6,155 +6,186 @@
     var pciResult = Model.MetodePCI();
 }
 
-<div class="card card-secondary">
+<div class="card card-secondary mb-2">
     <div class="card-header">
         <h4>Detail Segmen</h4>
-        <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.Analisis.Id" class="btn btn-primary">Kembali</a>
+        <div class="ml-auto">
+            <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.Analisis.Id" class="btn btn-primary">Kembali</a>
+        </div>
     </div>
     <div class="card-body">
-        <p>Luas Sampel : @Model.LuasSampel m<sup>2</sup></p>
+        <p>Luas Sampel : @Model.LuasSampel m<sup>2</sup></p>                       
+    </div>
+</div>
 
-        <h3>Ukuran Kertas Asli</h3>
+<div class="card mb-2">
+    <div class="card-header">
+        <h4>Ukuran Kertas Asli</h4>
+    </div>
+    <div class="card-body">
         <p>Dimensi Kertas (m) : @SegmenController.PANJANG_KERTASA4_M x @SegmenController.LEBAR_KERTASA4_M</p>
         <p>Luas Kertas (m<sup>2</sup>) : @SegmenController.LUAS_KERTASA4_M2</p>
+    </div>
+</div>
 
-        @if (densityDvs.Count > 0)
-        {
-            <h3>Daftar Nilai Density dan Deduct Value</h3>
-
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Kerusakan</th>
-                        <th>Kondisi</th>
-                        <th>Total Luas (m<sup>2</sup>)</th>
-                        <th>Density (%)</th>
-                        <th>Deduct Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var dv in densityDvs)
-                    {
+@if (densityDvs.Count > 0)
+{
+    <div class="card mb-2">
+        <div class="card-header">
+            <h4>Daftar Nilai Density dan Deduct Value</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="table-akun1">
+                    <thead>
                         <tr>
-                            <td>@dv.Label.Humanize()</td>
-                            <td>@dv.Kondisi.Humanize()</td>
-                            <td>@dv.TotalLuas</td>
-                            <td>@dv.DistressDensity.ToString("F5")</td>
-                            <td>@dv.DeductValue</td>
+                            <th>Kerusakan</th>
+                            <th>Kondisi</th>
+                            <th>Total Luas (m<sup>2</sup>)</th>
+                            <th>Density (%)</th>
+                            <th>Deduct Value</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
+                    </thead>
+                    <tbody>
+                        @foreach (var dv in densityDvs)
+                        {
+                            <tr>
+                                <td>@dv.Label.Humanize()</td>
+                                <td>@dv.Kondisi.Humanize()</td>
+                                <td>@dv.TotalLuas</td>
+                                <td>@dv.DistressDensity.ToString("F5")</td>
+                                <td>@dv.DeductValue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+    </div>   
+}
 
-        @if (pciResult is not null)
-        {
-            <h3>Hasil Metode PCI</h3>
+@if (pciResult is not null)
+{
+    <div class="card mb-2">
+        <div class="card-header">
+            <h4>Hasil Metode PCI</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="table-akun2">
+                    <thead>
+                        <tr>
+                            <th>Mi</th>
+                            <th>q<sub>Max</sub></th>
+                            <th>TDV<sub>Max</sub></th>
+                            <th>CDV<sub>Max</sub></th>
+                            <th>PCI</th>
+                            <th>Kondisi</th>
+                            <th>Jenis Penanganan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@pciResult.MI</td>
+                            <td>@pciResult.QMax</td>
+                            <td>@pciResult.TDVMax</td>
+                            <td>@pciResult.CDVMax</td>
+                            <td>@pciResult.PCI</td>
+                            <td>@pciResult.Kondisi</td>
+                            <td>@pciResult.JenisPenanganan</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>            
+        </div>
+    </div>  
+}
 
-            <table class="table table-bordered">
+
+<div class="card mb-2">
+    <div class="card-header">
+        <h4>Daftar Kerusakan</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="save-stage">
                 <thead>
                     <tr>
-                        <th>Mi</th>
-                        <th>q<sub>Max</sub></th>
-                        <th>TDV<sub>Max</sub></th>
-                        <th>CDV<sub>Max</sub></th>
-                        <th>PCI</th>
+                        <th rowspan="2"></th>
+                        <th rowspan="2">File Name</th>
+                        <th rowspan="2">Ukuran Foto</th>
+                        <th rowspan="2">m/pixel</th>
+                        <th rowspan="2">m<sup>2</sup>/pixel</th>
+                        <th rowspan="2">Luas (Kertas)</th>
+                        <th rowspan="2">Luas Persegi (Kertas)</th>
+                        <th rowspan="2">Panjang (Kertas)</th>
+                        <th rowspan="2">Lebar (Kertas)</th>
+                        <th rowspan="2">Mask (Kertas)</th>
+                        <th colspan="7">Kerusakan</th>
+                    </tr>
+                    <tr>
+                        <th>Jenis</th>
+                        <th>Luas</th>
+                        <th>Luas Persegi</th>
+                        <th>Panjang</th>
+                        <th>Lebar</th>
                         <th>Kondisi</th>
-                        <th>Jenis Penanganan</th>
+                        <th>Mask</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>@pciResult.MI</td>
-                        <td>@pciResult.QMax</td>
-                        <td>@pciResult.TDVMax</td>
-                        <td>@pciResult.CDVMax</td>
-                        <td>@pciResult.PCI</td>
-                        <td>@pciResult.Kondisi</td>
-                        <td>@pciResult.JenisPenanganan</td>
-                    </tr>
-                </tbody>
-            </table>
-        }
-
-        <h3>Daftar Kerusakan</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th rowspan="2"></th>
-                    <th rowspan="2">File Name</th>
-                    <th rowspan="2">Ukuran Foto</th>
-                    <th rowspan="2">m/pixel</th>
-                    <th rowspan="2">m<sup>2</sup>/pixel</th>
-                    <th rowspan="2">Luas (Kertas)</th>
-                    <th rowspan="2">Luas Persegi (Kertas)</th>
-                    <th rowspan="2">Panjang (Kertas)</th>
-                    <th rowspan="2">Lebar (Kertas)</th>
-                    <th rowspan="2">Mask (Kertas)</th>
-                    <th colspan="7">Kerusakan</th>
-                </tr>
-                <tr>
-                    <th>Jenis</th>
-                    <th>Luas</th>
-                    <th>Luas Persegi</th>
-                    <th>Panjang</th>
-                    <th>Lebar</th>
-                    <th>Kondisi</th>
-                    <th>Mask</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var foto in Model.DaftarFoto)
-                {
-                    var rowspan = foto.DaftarKerusakan.Count + 1;
-                    <tr>
-                        <td rowspan="@rowspan">
-                            <img src="@foto.ImageBase64" height="200" />
-                        </td>
-                        <td rowspan="@rowspan">@foto.FileName</td>
-                        <td rowspan="@rowspan">@foto.Lebar x @foto.Tinggi Pixel</td>
-                        @if (foto.AdaKertas)
-                        {
-                            <td rowspan="@rowspan">@foto.MPerPiksel.ToString("F10")</td>
-                            <td rowspan="@rowspan">@foto.M2PerPiksel.ToString("F10")</td>
-                            <td rowspan="@rowspan">@foto.LuasKertas m<sup>2</sup></td>
-                            <td rowspan="@rowspan">@foto.LuasPersegiKertas m<sup>2</sup></td>
-                            <td rowspan="@rowspan">@foto.PanjangKertas m</td>
-                            <td rowspan="@rowspan">@foto.LebarKertas m</td>
-                            <td rowspan="@rowspan">
-                                <p>@foto.LebarPikselKertas x @foto.TinggiPikselKertas Pixel</p>
-                                <img style="background-color:black" src="@foto.Mask64Kertas" height="200" />
-                            </td>
-                        }
-                        else
-                        {
-                            <td rowspan="@rowspan" colspan="7">Objek Pengukur (Kertas) tidak ditemukan</td>
-                        }
-                    </tr>
-                    @foreach (var kerusakan in foto.DaftarKerusakan)
+                    @foreach (var foto in Model.DaftarFoto)
                     {
+                        var rowspan = foto.DaftarKerusakan.Count + 1;
                         <tr>
-                            <td>@kerusakan.Label.Humanize()</td>
+                            <td rowspan="@rowspan">
+                                <img src="@foto.ImageBase64" height="200" />
+                            </td>
+                            <td rowspan="@rowspan">@foto.FileName</td>
+                            <td rowspan="@rowspan">@foto.Lebar x @foto.Tinggi Pixel</td>
                             @if (foto.AdaKertas)
                             {
-                                <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
-                                <td>@kerusakan.LuasPersegi.ToString("F5") m<sup>2</sup></td>
-                                <td>@kerusakan.Panjang.ToString("F5") m</td>
-                                <td>@kerusakan.Lebar.ToString("F5") m</td>
-                                <td>@kerusakan.Kondisi</td>
+                                <td rowspan="@rowspan">@foto.MPerPiksel.ToString("F10")</td>
+                                <td rowspan="@rowspan">@foto.M2PerPiksel.ToString("F10")</td>
+                                <td rowspan="@rowspan">@foto.LuasKertas m<sup>2</sup></td>
+                                <td rowspan="@rowspan">@foto.LuasPersegiKertas m<sup>2</sup></td>
+                                <td rowspan="@rowspan">@foto.PanjangKertas m</td>
+                                <td rowspan="@rowspan">@foto.LebarKertas m</td>
+                                <td rowspan="@rowspan">
+                                    <p>@foto.LebarPikselKertas x @foto.TinggiPikselKertas Pixel</p>
+                                    <img style="background-color:black" src="@foto.Mask64Kertas" height="200" />
+                                </td>
                             }
                             else
                             {
-                                <td rowspan="@rowspan - 1" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
+                                <td rowspan="@rowspan" colspan="7">Objek Pengukur (Kertas) tidak ditemukan</td>
                             }
-                            <td>
-                                <p>@kerusakan.LebarPiksel x @kerusakan.TinggiPiksel Pixel</p>
-                                <img style="background-color:black" src="@kerusakan.MaskBase64" height="200" />
-                            </td>
                         </tr>
+                        @foreach (var kerusakan in foto.DaftarKerusakan)
+                        {
+                            <tr>
+                                <td>@kerusakan.Label.Humanize()</td>
+                                @if (foto.AdaKertas)
+                                {
+                                    <td>@kerusakan.Luas.ToString("F5") m<sup>2</sup></td>
+                                    <td>@kerusakan.LuasPersegi.ToString("F5") m<sup>2</sup></td>
+                                    <td>@kerusakan.Panjang.ToString("F5") m</td>
+                                    <td>@kerusakan.Lebar.ToString("F5") m</td>
+                                    <td>@kerusakan.Kondisi</td>
+                                }
+                                else
+                                {
+                                    <td rowspan="@rowspan - 1" colspan="5">Objek Pengukur (Kertas) tidak ditemukan</td>
+                                }
+                                <td>
+                                    <p>@kerusakan.LebarPiksel x @kerusakan.TinggiPiksel Pixel</p>
+                                    <img style="background-color:black" src="@kerusakan.MaskBase64" height="200" />
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>        
     </div>
 </div>
