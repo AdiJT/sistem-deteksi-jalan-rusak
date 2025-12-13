@@ -15,5 +15,7 @@ namespace DeteksiJalanRusak.Web.Controllers
         }
 
         public async Task<IActionResult> Index() => View(await _context.TblAnalisis.ToListAsync());
+
+        public IActionResult Panduan() => View();
     }
 }
