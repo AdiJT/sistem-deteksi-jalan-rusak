@@ -69,6 +69,7 @@ public class SegmenController : Controller
     public IActionResult Tambah(int idAnalisis) => View(new TambahVM { IdAnalisis = idAnalisis });
 
     [HttpPost]
+    [RequestSizeLimit(100_000_000)]
     public async Task<IActionResult> Tambah(TambahVM vm)
     {
         if (!ModelState.IsValid) return View(vm);
