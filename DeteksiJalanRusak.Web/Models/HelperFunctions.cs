@@ -210,7 +210,7 @@ public static class HelperFunctions
             >= 56 and <= 70 => "Baik (Good)",
             >= 71 and <= 85 => "Sangat Baik (Very Good)",
             >= 86 and <= 100 => "Sempuran (Excelent)",
-            _ => throw new NotImplementedException()
+            _ => "Gagal (Failed)",
         };
 
     public static string JenisPenangananPCI(double pci) =>
