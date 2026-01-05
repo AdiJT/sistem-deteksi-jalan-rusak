@@ -203,12 +203,12 @@ public static class HelperFunctions
     public static string KondisiPCI(double pci) =>
         pci switch
         {
-            >= 0d and <= 10d => "Gagal (Failed)",
-            >= 11d and <= 25d => "Sangat Buruk (Very Poor)",
-            >= 26d and <= 40d => "Buruk (Poor)",
-            >= 41d and <= 55d => "Sedang (Fair)",
-            >= 56d and <= 70d => "Baik (Good)",
-            >= 71d and <= 85d => "Sangat Baik (Very Good)",
+            >= 0d and < 11d => "Gagal (Failed)",
+            >= 11d and < 25d => "Sangat Buruk (Very Poor)",
+            >= 26d and < 41d => "Buruk (Poor)",
+            >= 41d and < 55d => "Sedang (Fair)",
+            >= 56d and < 71d => "Baik (Good)",
+            >= 71d and < 86d => "Sangat Baik (Very Good)",
             >= 86d and <= 100d => "Sempuran (Excelent)",
             _ => "",
         };
@@ -216,12 +216,12 @@ public static class HelperFunctions
     public static string JenisPenangananPCI(double pci) =>
         pci switch
         {
-            >= 0d and <= 10d => "Rekonstruksi",
-            >= 11d and <= 25d => "Rekonstruksi",
-            >= 26d and <= 40d => "Berkala",
-            >= 41d and <= 55d => "Rutin",
-            >= 56d and <= 70d => "Rutin",
-            >= 71d and <= 85d => "Rutin",
+            >= 0d and < 11d => "Rekonstruksi",
+            >= 11d and < 25d => "Rekonstruksi",
+            >= 26d and < 41d => "Berkala",
+            >= 41d and < 55d => "Rutin",
+            >= 56d and < 71d => "Rutin",
+            >= 71d and < 86d => "Rutin",
             >= 86d and <= 100d => "Rutin",
             _ => ""
         };
