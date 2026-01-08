@@ -151,7 +151,7 @@
                         var rowspan = foto.DaftarKerusakan.Count + 1;
                         <tr>
                             <td rowspan="@rowspan">
-                                <img src="@foto.ImageBase64" height="200" />
+                                <img src="@Url.Action(nameof(FotoController.FotoKerusakan), "Foto", new { id = foto.Id})" height="200" />
                             </td>
                             <td rowspan="@rowspan">@foto.FileName</td>
                             <td rowspan="@rowspan">@foto.Lebar x @foto.Tinggi Pixel</td>
@@ -165,7 +165,7 @@
                                 <td rowspan="@rowspan">@foto.LebarKertas m</td>
                                 <td rowspan="@rowspan">
                                     <p>@foto.LebarPikselKertas x @foto.TinggiPikselKertas Pixel</p>
-                                    <img style="background-color:black" src="@foto.Mask64Kertas" height="200" />
+                                    <img style="background-color:black" src="@Url.Action(nameof(FotoController.MaskKertas), "Foto", new { id = foto.Id })" height="200" />
                                 </td>
                             }
                             else
@@ -191,7 +191,7 @@
                                 }
                                 <td>
                                     <p>@kerusakan.LebarPiksel x @kerusakan.TinggiPiksel Pixel</p>
-                                    <img style="background-color:black" src="@kerusakan.MaskBase64" height="200" />
+                                    <img style="background-color:black" src="@Url.Action(nameof(FotoController.MaskKerusakan), "Foto", new { id = kerusakan.Id })" height="200" />
                                 </td>
                             </tr>
                         }

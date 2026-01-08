@@ -6,7 +6,7 @@ public class Kerusakan
 {
     public int Id { get; set; }
 
-    public required string MaskBase64 { get; set; }
+    public required byte[] Mask { get; set; }
     public required LabelEnum Label { get; set; }
     public required double Luas { get; set; }
     public required double Panjang { get; set; }

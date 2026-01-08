@@ -116,13 +116,13 @@ public class SegmenController : Controller
             {
                 AdaKertas = false,
                 FileName = vm.FormFiles[Array.IndexOf(daftarFoto, foto)].FileName,
-                ImageBase64 = image.ToBase64String(),
+                Image = image.Encode(SKEncodedImageFormat.Jpeg, 70).ToArray(),
                 Lebar = image.Width,
                 Tinggi = image.Height,
                 DaftarKerusakan = [.. results.Where(x => x.Label.Name != LabelEnum.Kertas.ToString()).Select(x => new Kerusakan
                 {
                     Label = x.Label.Name.DehumanizeTo<LabelEnum>(),
-                    MaskBase64 = x.BitPackedPixelMask.UnpackToBitmap(x.BoundingBox.Width, x.BoundingBox.Height).ToBase64String(),
+                    Mask = x.BitPackedPixelMask.UnpackToBitmap(x.BoundingBox.Width, x.BoundingBox.Height).Encode(SKEncodedImageFormat.Jpeg, 70).ToArray(),
                     Luas = 0,
                     Panjang = 0,
                     Lebar = 0,
@@ -143,8 +143,7 @@ public class SegmenController : Controller
 
                 fotoKerusakan.AdaKertas = true;
 
-                fotoKerusakan.Mask64Kertas = kertas
-                    .BitPackedPixelMask.UnpackToBitmap(kertas.BoundingBox.Width, kertas.BoundingBox.Height).ToBase64String();
+                fotoKerusakan.MaskKertas = kertas.BitPackedPixelMask.UnpackToBitmap(kertas.BoundingBox.Width, kertas.BoundingBox.Height).Encode(SKEncodedImageFormat.Jpeg, 70).ToArray();
 
                 fotoKerusakan.M2PerPiksel = m2PerPixel;
                 fotoKerusakan.MPerPiksel = mPerPixel;
@@ -161,10 +160,10 @@ public class SegmenController : Controller
                     fotoKerusakan.DaftarKerusakan.Add(new Kerusakan
                     {
                         Label = segmentation.Label.Name.DehumanizeTo<LabelEnum>(),
-                        MaskBase64 = segmentation
+                        Mask = segmentation
                             .BitPackedPixelMask
                             .UnpackToBitmap(segmentation.BoundingBox.Width, segmentation.BoundingBox.Height)
-                            .ToBase64String(),
+                            .Encode(SKEncodedImageFormat.Jpeg, 70).ToArray(),
                         Luas = segmentation.BitPackedPixelMask.Count(x => x != 0) * m2PerPixel,
                         Panjang = segmentation.BoundingBox.Height * mPerPixel,
                         Lebar = segmentation.BoundingBox.Width * mPerPixel,

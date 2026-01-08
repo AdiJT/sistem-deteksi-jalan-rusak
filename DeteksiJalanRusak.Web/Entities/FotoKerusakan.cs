@@ -5,11 +5,11 @@ public class FotoKerusakan
     public int Id { get; set; }
 
     public required string FileName { get; set; }
-    public required string ImageBase64 { get; set; }
+    public required byte[] Image { get; set; }
     public required double Lebar { get; set; }
     public required double Tinggi { get; set; }
     public required bool AdaKertas { get; set; }
-    public string Mask64Kertas { get; set; } = string.Empty;
+    public byte[] MaskKertas { get; set; } = [];
     public double LuasKertas { get; set; }
     public double PanjangKertas { get; set; }
     public double LebarKertas { get; set; }
