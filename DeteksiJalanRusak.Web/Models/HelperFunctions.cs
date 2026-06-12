@@ -164,6 +164,7 @@ public static class HelperFunctions
     public static KondisiKerusakan Kondisi(LabelEnum labelEnum, double luas, double panjang, double lebar)
     {
         var kondisi = panjang > lebar ? panjang : lebar;
+        var modePanjang = panjang > lebar;
 
         switch (labelEnum)
         {
@@ -180,17 +181,35 @@ public static class HelperFunctions
                 else if (kondisi >= 0.5 && kondisi <= 3) return KondisiKerusakan.Medium;
                 else return KondisiKerusakan.High;
             case LabelEnum.PelepasanButiran:
-                if (kondisi < 0.5) return KondisiKerusakan.Low;
-                else if (kondisi >= 0.5 && kondisi <= 3) return KondisiKerusakan.Medium;
+                if (kondisi < 0.6) return KondisiKerusakan.Low;
+                else if (kondisi >= 0.6 && kondisi <= 3) return KondisiKerusakan.Medium;
                 else return KondisiKerusakan.High;
             case LabelEnum.RetakBuaya:
-                if (kondisi < 0.5) return KondisiKerusakan.Low;
-                else if (kondisi >= 0.5 && kondisi <= 5) return KondisiKerusakan.Medium;
-                else return KondisiKerusakan.High;
+                if (modePanjang)
+                {
+                    if (kondisi <= 1) return KondisiKerusakan.Low;
+                    else if (kondisi > 1 && kondisi <= 5) return KondisiKerusakan.Medium;
+                    else return KondisiKerusakan.High;
+                }
+                else
+                {
+                    if (kondisi <= 0.5) return KondisiKerusakan.Low;
+                    else if (kondisi > 0.5 && kondisi <= 3) return KondisiKerusakan.Medium;
+                    else return KondisiKerusakan.High;
+                }
             case LabelEnum.RetakMemanjang:
-                if (kondisi < 0.5) return KondisiKerusakan.Low;
-                else if (kondisi >= 0.5 && kondisi <= 5) return KondisiKerusakan.Medium;
-                else return KondisiKerusakan.High;
+                if (modePanjang)
+                {
+                    if (kondisi < 0.5) return KondisiKerusakan.Low;
+                    else if (kondisi >= 0.5 && kondisi <= 5) return KondisiKerusakan.Medium;
+                    else return KondisiKerusakan.High;
+                }
+                else
+                {
+                    if (kondisi < 0.01) return KondisiKerusakan.Low;
+                    else if (kondisi >= 0.01 && kondisi <= 0.076) return KondisiKerusakan.Medium;
+                    else return KondisiKerusakan.High;
+                }
             case LabelEnum.Tambalan:
                 if (kondisi < 1) return KondisiKerusakan.Low;
                 else if (kondisi >= 1 && kondisi <= 3) return KondisiKerusakan.Medium;
