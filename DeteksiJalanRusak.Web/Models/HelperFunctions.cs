@@ -206,8 +206,8 @@ public static class HelperFunctions
                 }
                 else
                 {
-                    if (kondisi < 0.01) return KondisiKerusakan.Low;
-                    else if (kondisi >= 0.01 && kondisi <= 0.076) return KondisiKerusakan.Medium;
+                    if (kondisi <= 0.01) return KondisiKerusakan.Low;
+                    else if (kondisi > 0.01 && kondisi < 0.076) return KondisiKerusakan.Medium;
                     else return KondisiKerusakan.High;
                 }
             case LabelEnum.Tambalan:
