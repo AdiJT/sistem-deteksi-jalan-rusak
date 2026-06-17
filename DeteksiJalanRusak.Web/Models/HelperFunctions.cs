@@ -228,7 +228,7 @@ public static class HelperFunctions
             >= 41d and < 55d => "Sedang (Fair)",
             >= 56d and < 71d => "Baik (Good)",
             >= 71d and < 86d => "Sangat Baik (Very Good)",
-            >= 86d and <= 100d => "Sempuran (Excelent)",
+            >= 86d and <= 100d => "Sempurna (Excelent)",
             _ => "",
         };
 
