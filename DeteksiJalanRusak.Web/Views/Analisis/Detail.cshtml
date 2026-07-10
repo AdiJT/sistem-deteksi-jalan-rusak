@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Detail Analisis";
+
+    var daftarKoordinatSegmen = Model.DaftarSegmen.Where(x => x.Lat is not null && x.Lng is not null).Select(x => new { Id = x.Id + 1, x.Lat, x.Lng }).ToList();
 }
 
 <div class="card card-secondary mb-2">
@@ -40,6 +42,20 @@
                 </tbody>
             </table>
         </div>        
+    </div>
+</div>
+
+<div class="card mb-2">
+    <div class="card-header">
+        <h4>Peta Sebaran Segmen</h4>
+    </div>
+
+    <div class="card-body">
+        @if (daftarKoordinatSegmen.Count > 0)
+        {
+            <input readonly hidden id="mapData" value="@(Json.Serialize(daftarKoordinatSegmen))"/>
+            <div id="map" style="height:400px; width:100%"></div>
+        }
     </div>
 </div>
 
@@ -121,3 +137,28 @@
     </div>
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+        $(function() {
+            const map = L.map('map')
+            const dataStr = '@Html.Raw(Json.Serialize(daftarKoordinatSegmen))';
+            const data = JSON.parse(dataStr);
+
+            console.log(data);
+
+            map.setView([data[0].lat, data[1].lng], 12);
+            data.forEach((x) => {
+                console.log(x);
+                const marker = L.marker([x.lat, x.lng]).addTo(map);
+                marker.bindPopup(`Segmen ${x.id}. Lat : ${x.lat}, Lng : ${x.lng}`);
+            });
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 15,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+        });
+    </script>
+}
