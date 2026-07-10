@@ -148,7 +148,7 @@
 
             console.log(data);
 
-            map.setView([data[0].lat, data[1].lng], 12);
+            map.setView([data[0].lat, data[0].lng], 12);
             data.forEach((x) => {
                 console.log(x);
                 const marker = L.marker([x.lat, x.lng]).addTo(map);
