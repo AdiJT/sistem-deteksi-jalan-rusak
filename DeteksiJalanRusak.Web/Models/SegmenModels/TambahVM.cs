@@ -13,5 +13,11 @@ public class TambahVM
     [Required(ErrorMessage = "Harus diisi")]
     public double LuasSampel { get; set; } = 200;
 
+    [Display(Name = "Koordinat (Lat.)")]
+    public double Lat { get; set; }
+
+    [Display(Name = "Koordinat (Lng.)")]
+    public double Lng { get; set; }
+
     public required int IdAnalisis { get; set; }
 }

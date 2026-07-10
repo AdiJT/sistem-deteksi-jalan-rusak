@@ -30,6 +30,39 @@
     </div>
 </div>
 
+@if (Model.Lat is not null && Model.Lng is not null)
+{
+    <div class="card card-secondary mb-2">
+        <div class="card-header">
+            <h4>Lokasi Segmen</h4>
+        </div>
+        <div class="card-body">
+            <p>Koordinaat (Lat, Lng) : (@Model.Lat, @Model.Lng)</p>
+            <div id="map" style="height:200px; width:100%"></div>
+        </div>
+    </div>
+}
+
+<div class="card card-secondary mb-2">
+    <div class="card-header">
+        <h4>Detail Segmen</h4>
+        <div class="ml-auto">
+            <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.Analisis.Id" class="btn btn-primary">Kembali</a>
+        </div>
+        <div class="ml-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.AbsoluteUri()" class="btn btn-warning">Edit</a>
+        </div>
+        <div class="ml-2">
+            <form asp-action="Hapus" asp-route-id="@Model.Id" style="display:inline">
+                <button class="btn btn-danger">Hapus</button>
+            </form>
+        </div>
+    </div>
+    <div class="card-body">
+        <p>Luas Sampel : @Model.LuasSampel m<sup>2</sup></p>                       
+    </div>
+</div>
+
 <div class="card mb-2">
     <div class="card-header">
         <h4>Ukuran Kertas Asli</h4>
@@ -201,3 +234,24 @@
         </div>        
     </div>
 </div>
+
+                                
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+        $(function() {
+            const map = L.map('map')
+
+            @if (Model.Lat is not null && Model.Lng is not null)
+            {
+                    @(Html.Raw($"map.setView([{Model.Lat.Value}, {Model.Lng.Value}], 15);" +
+                    $"const marker = L.marker([{Model.Lat.Value}, {Model.Lng.Value}]).addTo(map);" +
+                            "L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {" +
+                                    "maxZoom: 21," +
+                                    "attribution: '&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>'" +
+                            "}).addTo(map);"));
+            }
+        });
+    </script>
+}

@@ -95,6 +95,8 @@ public class SegmenController : Controller
         {
             LuasSampel = vm.LuasSampel,
             Analisis = analisis,
+            Lat = vm.Lat,
+            Lng = vm.Lng,
             DaftarFoto = []
         };
 
@@ -203,6 +205,8 @@ public class SegmenController : Controller
         {
             Id = id,
             LuasSampel = segmen.LuasSampel,
+            Lat = segmen.Lat,
+            Lng = segmen.Lng,
             ReturnUrl = returnUrl ?? Url.ActionLink("Detail", "Analisis", new { id = segmen.Analisis.Id })!
         });
     }
@@ -216,6 +220,8 @@ public class SegmenController : Controller
         if (segmen is null) return NotFound();
 
         segmen.LuasSampel = vm.LuasSampel;
+        segmen.Lat = vm.Lat;
+        segmen.Lng = vm.Lng;
 
         try
         {

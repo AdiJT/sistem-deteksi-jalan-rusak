@@ -26,6 +26,34 @@
                 <span asp-validation-for="@Model.LuasSampel" class="text-danger"></span>
             </div>
 
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-xl-4 col-xxl-4 col-6">
+                    <div class="form-group">
+                        <label asp-for="@Model.Lat"></label>
+                        <input asp-for="@Model.Lat" class="form-control" />
+                        <span asp-validation-for="@Model.Lat" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-xl-4 col-xxl-4 col-6">
+                    <div class="form-group">
+                        <label asp-for="@Model.Lng"></label>
+                        <input asp-for="@Model.Lng" class="form-control" />
+                        <span asp-validation-for="@Model.Lng" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-xl-4 col-xxl-4 col-12 align-content-center mb-3">
+                    <button type="button" id="btnLokasi" class="btn btn-info">Isi Lokasi Saat Ini</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div id="map" style="height:200px; width:100%"></div>
+
+                    <span id="status" class="text-danger"></span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <a asp-action="Detail" asp-controller="Analisis" asp-route-id="@Model.IdAnalisis" class="btn btn-danger">Batal</a>
@@ -34,8 +62,48 @@
     </div>
 </div>
 
-
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+        $(function() {
+            const btnLokasi = $('#btnLokasi');
+            const status = $('#status');
+            const map = L.map('map')
+
+            if (!navigator.geolocation) {
+                $(status).text('Lokasi tidak di dukung browser anda!');
+                $(btnLokasi).attr('disabled', true);
+            } else {
+                $(btnLokasi).on('click', function () {
+                    $(btnLokasi).text("Mengambil Lokasi...");
+                    $(btnLokasi).attr('disabled', false);
+                    $(status).text('');
+
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        $(btnLokasi).text("Isi Lokasi Saat Ini");
+                        $(btnLokasi).attr('disabled', false);
+
+                        $('#Lat').val(pos.coords.latitude);
+                        $('#Lng').val(pos.coords.longitude);
+
+                        map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+                        const marker = L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map);
+                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 21,
+                            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        }).addTo(map);
+                    }, () => {
+                        $(btnLokasi).text("Isi Lokasi Saat Ini");
+                        $(btnLokasi).attr('disabled', false);
+
+                        $(status).text('Lokasi gagal diambil!');
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 100000,
+                    });
+                });
+            }
+        });
+    </script>
 }

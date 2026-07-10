@@ -8,6 +8,9 @@ public class Segmen
 
     public required double LuasSampel { get; set; }
 
+    public double? Lat { get; set; }
+    public double? Lng { get; set; }
+
     public List<DensityDV> DensityDVs() => [.. DaftarFoto
         .Where(x => x.AdaKertas)
         .SelectMany(x => x.DaftarKerusakan)
