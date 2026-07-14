@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Detail Analisis";
 
-    var daftarKoordinatSegmen = Model.DaftarSegmen.Where(x => x.Lat is not null && x.Lng is not null).Select(x => new { Id = x.Id + 1, x.Lat, x.Lng }).ToList();
+    var daftarKoordinatSegmen = Model.DaftarSegmen.Where(x => x.Lat is not null && x.Lng is not null).Select((x, i) => new { Id = i + 1, x.Lat, x.Lng }).ToList();
 }
 
 <div class="card card-secondary mb-2">
